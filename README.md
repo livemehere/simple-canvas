@@ -7,7 +7,9 @@ no more complex settings, just create instance and start drawing!
 
 ## Usage
 
-### Basic
+### Basic Example
+
+example for drawing a rectangle that moves to the right and rotating dash line.
 
 ```js
 const canvas = document.querySelector('canvas');
@@ -40,21 +42,13 @@ rect.update = function(){
 }
 ```
 
-### Element
+### Element Mouse event 
 
-#### clone
-
-```js
-// ...
-rect.onClick = function(e){
-    const newRect = rect.clone({widthEvent:true,widthUpdate:true});
-    canvasManager.addElement(newRect);
-    newRect.position.x = e.mousePosition.x - newRect.width/2;
-    newRect.position.y = e.mousePosition.y - newRect.height/2;
-}
-```
-
-#### mouse event
+- 4 types of mouse event are supported.
+  - onMouseOver
+  - onMouseLeave
+  - onClick
+  - onMousePressed
 
 ```js
 // ... 
