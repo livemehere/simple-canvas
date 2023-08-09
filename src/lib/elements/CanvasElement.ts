@@ -49,8 +49,4 @@ export class CanvasElement {
         throw new Error('You have to implement the method draw!');
     }
 
-    /* id, update 제외하고 복사 */
-    clone() {
-       throw new Error('You have to implement the method clone!');
-    }
 }

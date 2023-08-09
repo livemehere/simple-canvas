@@ -34,25 +34,34 @@ export class CanvasManager {
         this.elements = [];
 
         this.canvas.addEventListener('mousemove', this._setMousePosition.bind(this));
-        this.canvas.addEventListener('mousedown', () => {
-            this.isMousePressed = true;
-            for(const element of this.elements) {
-                if (element.onClick && this._isCollideWithMouse(element)) {
-                    console.log('click!')
-                    element.onClick({
-                        type: 'click',
-                        target: element,
-                        mousePosition: this.mouse,
-                        elementPosition: element.position,
-                    })
-                }
-                break;
-            }
-        })
+        this.canvas.addEventListener('mousedown', this._handleMouseDown.bind(this));
         this.canvas.addEventListener('mouseup', () => {
             this.isMousePressed = false;
         });
         this.animate();
+    }
+
+    private _handleMouseDown() {
+        this.isMousePressed = true;
+        for (const element of this.elements) {
+            if (element.onClick && this._isCollideWithMouse(element)) {
+                element.onClick({
+                    type: 'click',
+                    target: element,
+                    mousePosition: this.mouse,
+                    elementPosition: element.position,
+                })
+            break;
+            }
+        }
+    }
+
+    private _setMousePosition(e: MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        }
     }
 
     draw() {
@@ -78,13 +87,7 @@ export class CanvasManager {
         this.draw();
     }
 
-    _setMousePosition(e: MouseEvent) {
-        const rect = this.canvas.getBoundingClientRect();
-        this.mouse = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        }
-    }
+
 
     addElement(element: CanvasElement) {
         this.elements.push(element);
@@ -126,7 +129,6 @@ export class CanvasManager {
             element._isMouseEnter = false;
         }
         if (element.onMousePressed && this.isMousePressed && this._isCollideWithMouse(element)) {
-            console.log('mousepressed')
             element.onMousePressed({
                 type: 'mousepressed',
                 target: element,
