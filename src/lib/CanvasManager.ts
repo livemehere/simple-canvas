@@ -114,14 +114,14 @@ export class CanvasManager {
         for (let i =0; i < this.elements.length; i++) {
             const element = this.elements[i];
             if (this._isCollideWithMouse(element)) {
-                this._handleElementMouseLeave(element);
                 this.currentMouseTargetElement = element;
             }
         }
+        this._handleElementMouseLeave();
     }
 
-    private _handleElementMouseLeave(currentElement: CanvasElement) {
-        const targetElements = this.elements.filter(element => element._isMouseEnter && element.onMouseLeave && currentElement.id !== element.id);
+    private _handleElementMouseLeave() {
+        const targetElements = this.elements.filter(element => element._isMouseEnter && element.onMouseLeave && this.currentMouseTargetElement?.id !== element.id);
         targetElements.forEach(element => {
             element.onMouseLeave?.({
                 type: 'mouseleave',
