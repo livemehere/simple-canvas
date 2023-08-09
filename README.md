@@ -54,9 +54,7 @@ rect.onClick = function(e){
 }
 ```
 
-## Mouse Event Example
-
-### For Element
+#### mouse event
 
 ```js
 // ... 
@@ -77,26 +75,5 @@ rect.onMousePressed = function(e){
     this.fillColor = 'yellow';
     rect.position.x = e.mousePosition.x - rect.width/2;
     rect.position.y = e.mousePosition.y - rect.height/2;
-}
-```
-
-### For Canvas
-
-```js
-// ...
-canvasManager.onMousePressed = function (e) {
-    console.log('press', e);
-}
-
-canvasManager.onMouseReleased = function (e) {
-    console.log('release', e);
-}
-
-canvasManager.onMouseMove = function (e) {
-    console.log('move', e);
-}
-
-canvasManager.onClick = function (e) {
-    console.log('click', e);
 }
 ```
