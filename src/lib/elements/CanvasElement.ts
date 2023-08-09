@@ -19,12 +19,12 @@ export class CanvasElement {
     type!:CanvasElementType // 새로운 엘리먼트 클래스를 만들때 반드시 생성자에서 type 을 지정해야 합니다.
     position: Position;
     id: string;
-    className?: string;
     width: number;
     height: number;
     fillColor: string;
-    stroke?: Stroke;
     zIndex: number;
+    className?: string;
+    stroke?: Stroke;
     update?: () => void;
 
     /* 마우스 이벤트 */

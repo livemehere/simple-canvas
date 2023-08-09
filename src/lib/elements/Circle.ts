@@ -1,9 +1,15 @@
 import {CanvasElement, CanvasElementProps} from "./CanvasElement";
 
-export class Rect extends CanvasElement {
-    constructor(props:CanvasElementProps) {
-        super(props);
-        this.type = 'rect';
+type CanvasCircleProps = {
+    radius: number;
+} & Omit<CanvasElementProps,'width'|'height'>
+
+export class Circle extends CanvasElement {
+    radius: number;
+    constructor(props:CanvasCircleProps) {
+        super({...props, width: props.radius*2, height: props.radius*2});
+        this.type = 'circle';
+        this.radius = (this as any).width;
     }
 
     draw(ctx: CanvasRenderingContext2D) {
@@ -13,7 +19,7 @@ export class Rect extends CanvasElement {
         ctx.setLineDash(this.stroke?.dash ?? []);
         ctx.lineDashOffset = this.stroke?.dashOffset ?? 0;
         ctx.beginPath();
-        ctx.rect(this.position.x,this.position.y,this.width,this.height);
+        ctx.arc(this.position.x,this.position.y,this.radius,0,Math.PI*2);
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
