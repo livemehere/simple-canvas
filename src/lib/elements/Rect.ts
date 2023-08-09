@@ -19,5 +19,4 @@ export class Rect extends CanvasElement {
         ctx.stroke();
         ctx.closePath();
     }
-
 }

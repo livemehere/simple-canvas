@@ -16,8 +16,10 @@ export class CanvasManager {
     bgColor: string;
     dpi: number = window.devicePixelRatio || 1;
     elements: CanvasElement[];
+
     mouse: Position = {x: 0, y: 0};
     isMousePressed: boolean = false;
+    currentMouseTargetElement?: CanvasElement;
 
     constructor({canvas, width, height, bgColor}: CanvasManagerProps) {
         this.canvas = canvas;
@@ -31,47 +33,23 @@ export class CanvasManager {
         this.canvas.style.height = `${height}px`;
         this.ctx.scale(this.dpi, this.dpi);
 
-        this.elements = [];
+        this.elements = []; // 오름차순
 
         this.canvas.addEventListener('mousemove', this._setMousePosition.bind(this));
         this.canvas.addEventListener('mousedown', this._handleMouseDown.bind(this));
-        this.canvas.addEventListener('mouseup', () => {
-            this.isMousePressed = false;
-        });
+        this.canvas.addEventListener('mouseup', this._handleMouseUp.bind(this));
         this.animate();
     }
 
-    private _handleMouseDown() {
-        this.isMousePressed = true;
-        for (const element of this.elements) {
-            if (element.onClick && this._isCollideWithMouse(element)) {
-                element.onClick({
-                    type: 'click',
-                    target: element,
-                    mousePosition: this.mouse,
-                    elementPosition: element.position,
-                })
-            break;
-            }
-        }
-    }
-
-    private _setMousePosition(e: MouseEvent) {
-        const rect = this.canvas.getBoundingClientRect();
-        this.mouse = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        }
-    }
 
     draw() {
-        this.elements.sort((a, b) => a.zIndex - b.zIndex);
+        this.elements.sort((a, b) => a.zIndex - b.zIndex); // 오름차순
         this.elements.forEach((element) => {
             /* 엔트리로서, 캔버스 상태에 접근할 수 있도록 주입 */
             element.canvasManager = this;
 
             /* 마우스와 엘리먼트 상태를 검사하여 callback 실행 */
-            this._checkStatusWithMouse(element);
+            this._handleCurrentMouseTargetEvent(element);
 
             element.update?.();
             element.draw(this.ctx);
@@ -86,8 +64,6 @@ export class CanvasManager {
         requestAnimationFrame(this.animate.bind(this));
         this.draw();
     }
-
-
 
     addElement(element: CanvasElement) {
         this.elements.push(element);
@@ -109,8 +85,58 @@ export class CanvasManager {
         return this.elements.filter((el) => el.className === className);
     }
 
-    private _checkStatusWithMouse(element: CanvasElement) {
-        if (element.onMouseOver && this._isCollideWithMouse(element)) {
+    /* Element 들 mouse 이벤트 */
+    private _handleMouseUp() {
+        this.isMousePressed = false;
+        this.currentMouseTargetElement = undefined;
+    }
+
+    private _handleMouseDown() {
+        this.isMousePressed = true;
+        if (this.currentMouseTargetElement?.onClick) {
+            this.currentMouseTargetElement.onClick({
+                type: 'click',
+                target: this.currentMouseTargetElement,
+                mousePosition: this.mouse,
+                elementPosition: this.currentMouseTargetElement.position,
+            })
+        }
+    }
+
+    private _setMousePosition(e: MouseEvent) {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        }
+        this.currentMouseTargetElement = undefined;
+        /* 마우스가 움직일 때 마다 가상 최상위의 element 를 currentTarget 으로 세팅함 */
+        for (let i =0; i < this.elements.length; i++) {
+            const element = this.elements[i];
+            if (this._isCollideWithMouse(element)) {
+                this._handleElementMouseLeave(element);
+                this.currentMouseTargetElement = element;
+            }
+        }
+    }
+
+    private _handleElementMouseLeave(currentElement: CanvasElement) {
+        const targetElements = this.elements.filter(element => element._isMouseEnter && element.onMouseLeave && currentElement.id !== element.id);
+        targetElements.forEach(element => {
+            element.onMouseLeave?.({
+                type: 'mouseleave',
+                target: element,
+                mousePosition: this.mouse,
+                elementPosition: element.position,
+            })
+            element._isMouseEnter = false;
+        })
+    }
+
+    private _handleCurrentMouseTargetEvent(element: CanvasElement) {
+        if(!this.currentMouseTargetElement || this.currentMouseTargetElement.id !== element.id) return;
+        /* element === this.currentMouseTargetElement */
+        if (element.onMouseOver) {
             element._isMouseEnter = true;
             element.onMouseOver({
                 type: 'mouseover',
@@ -119,16 +145,8 @@ export class CanvasManager {
                 elementPosition: element.position,
             })
         }
-        if (element.onMouseLeave && element._isMouseEnter && !this._isCollideWithMouse(element)) {
-            element.onMouseLeave({
-                type: 'mouseleave',
-                target: element,
-                mousePosition: this.mouse,
-                elementPosition: element.position,
-            })
-            element._isMouseEnter = false;
-        }
-        if (element.onMousePressed && this.isMousePressed && this._isCollideWithMouse(element)) {
+
+        if (element.onMousePressed && this.isMousePressed) {
             element.onMousePressed({
                 type: 'mousepressed',
                 target: element,
