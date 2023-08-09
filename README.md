@@ -11,6 +11,8 @@ no more complex settings, just create instance and start drawing!
 
 example for drawing a rectangle that moves to the right and rotating dash line.
 
+![basic-example.gif](docs%2Fimgs%2Fbasic-example.gif)
+
 ```js
 const canvas = document.querySelector('canvas');
 const canvasManager = new CanvasManager({
@@ -50,24 +52,23 @@ rect.update = function(){
   - onClick
   - onMousePressed
 
+![element-click-example.gif](docs%2Fimgs%2Felement-click-example.gif)
+
 ```js
 // ... 
-rect.onMouseOver = function(e){
-    this.fillColor = 'blue'
-}
-
-rect.onMouseLeave = function(e){
-    this.fillColor = 'red'
-}
-
-rect.onClick = function(e){
-    this.width += 10;
-    this.height += 10;
-}
-
 rect.onMousePressed = function(e){
-    this.fillColor = 'yellow';
-    rect.position.x = e.mousePosition.x - rect.width/2;
-    rect.position.y = e.mousePosition.y - rect.height/2;
+  this.position.x = e.mousePosition.x - this.width/2;
+  this.position.y = e.mousePosition.y - this.height/2;
+}
+rect.onMouseOver = function(e){
+  this.fillColor = '#ffa1a1'
+}
+rect.onMouseLeave = function(e){
+  this.fillColor = 'red'
+}
+rect.onClick = function(e){
+  if(this.stroke){
+    this.stroke.dash = []
+  }
 }
 ```
