@@ -14,7 +14,7 @@ export type CanvasElementProps = {
     zIndex?: number;
 }
 
-export class CanvasElement {
+export class CanvasElement<T extends {} = {}> {
     canvasManager!: CanvasManager; // CanvasManager 에서 draw 직전 반드시 주입됩니다.
     type!:CanvasElementType // 새로운 엘리먼트 클래스를 만들때 반드시 생성자에서 type 을 지정해야 합니다.
     position: Position;
@@ -26,6 +26,7 @@ export class CanvasElement {
     className?: string;
     stroke?: Stroke;
     update?: () => void;
+    state:T;
 
     /* 마우스 이벤트 */
     _isMouseEnter: boolean = false;
@@ -43,10 +44,14 @@ export class CanvasElement {
         this.fillColor = fillColor;
         this.stroke = stroke;
         this.zIndex = zIndex ?? 0;
+        this.state = {} as T;
     }
-
     draw(ctx: CanvasRenderingContext2D) {
         throw new Error('You have to implement the method draw!');
+    }
+
+    remove(){
+        this.canvasManager.removeElement(this);
     }
 
 }

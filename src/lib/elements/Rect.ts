@@ -1,6 +1,6 @@
 import {CanvasElement, CanvasElementProps} from "./CanvasElement";
 
-export class Rect extends CanvasElement {
+export class Rect<T extends {} = {}>  extends CanvasElement<T> {
     constructor(props:CanvasElementProps) {
         super(props);
         this.type = 'rect';

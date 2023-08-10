@@ -1,7 +1,6 @@
 import {CanvasManager} from "../lib/CanvasManager";
-import {Rect} from "../lib/elements/Rect";
-import {randomBetween} from "../lib/util/math";
 import {Circle} from "../lib/elements/Circle";
+import {randomBetween} from "../lib/util/math";
 
 const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 const canvasManager = new CanvasManager({
@@ -11,16 +10,32 @@ const canvasManager = new CanvasManager({
     bgColor: 'black',
 })
 
+for(let i=0; i< 100;i++){
+    const circle = new Circle<{
+        dy:number,
+        friction:number
+    }>({
+        position:{
+            x:randomBetween(0, canvasManager.width),
+            y:canvasManager.height
+        },
+        radius:1,
+        fillColor:'white'
+    })
+    canvasManager.addElement(circle);
 
-const circle =  new Circle({
-    position: {x: 100, y: 100},
-    radius:50,
-    fillColor: 'white',
-})
+    let dy = randomBetween(1,10);
+    const friction = 0.98;
+    circle.state = {
+        dy,
+        friction
+    }
+    circle.update = function(){
+        this.state.dy *= this.state.friction;
+        this.position.y -= this.state.dy;
+        if(this.state.dy < 0.1){
+            this.remove();
+        }
+    }
 
-circle.update = function(){
-    this.position.x += 1;
-    this.position.y += 1;
 }
-
-canvasManager.addElement(circle);

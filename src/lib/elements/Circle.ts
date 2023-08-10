@@ -4,7 +4,7 @@ type CanvasCircleProps = {
     radius: number;
 } & Omit<CanvasElementProps,'width'|'height'>
 
-export class Circle extends CanvasElement {
+export class Circle<T extends {} = {}> extends CanvasElement<T> {
     radius: number;
     constructor(props:CanvasCircleProps) {
         super({...props, width: props.radius*2, height: props.radius*2});
