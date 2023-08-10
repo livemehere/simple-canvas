@@ -57,7 +57,6 @@ export class CanvasManager {
     }
 
     animate() {
-        this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillStyle = this.bgColor;
         this.ctx.fillRect(0, 0, this.width, this.height);
 
