@@ -38,7 +38,10 @@ export class CanvasElement<T extends {} = {}> {
     constructor({zIndex,position, width, height, fillColor, stroke, id, className}: CanvasElementProps) {
         this.id = id ?? Math.random().toString(36).slice(2)
         this.className = className;
-        this.position = position;
+        this.position = {
+            x: position.x,
+            y: position.y
+        };
         this.width = width;
         this.height = height;
         this.fillColor = fillColor;
