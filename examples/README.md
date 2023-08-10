@@ -4,8 +4,8 @@
 
 ![snow-example.gif](imgs%2Fsnow-example.gif)
 
-```js
-const canvas = document.querySelector('canvas');
+```ts
+const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 const canvasManager = new CanvasManager({
     canvas:canvas,
     width: 1000,
@@ -14,7 +14,9 @@ const canvasManager = new CanvasManager({
 })
 
 for(let i=0; i<100; i++){
-    const rect = new Rect({
+    const rect = new Rect<{
+        speed:number;
+    }>({
         position:{
             y:randomBetween(0,-10),
             x:randomBetween(0,canvasManager.width)
@@ -24,9 +26,11 @@ for(let i=0; i<100; i++){
         fillColor: 'white',
     })
     canvasManager.addElement(rect);
-    const speed = randomBetween(1,10);
+
+    rect.state.speed = randomBetween(1,10);
+
     rect.update = function(){
-        this.position.y += speed;
+        this.position.y += this.state.speed;
         if(this.position.y > canvasManager.height){
             this.position.y = 0;
         }

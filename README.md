@@ -72,3 +72,24 @@ rect.onClick = function(e){
   }
 }
 ```
+
+### State
+
+Element has own state property. See the example below.
+
+```ts
+class CanvasElement<T extends {} = {}>{
+    state: T;
+    // ...
+}
+
+const rect = new Rect<{ speed:number; }>({
+    // ...
+})
+
+rect.state.speed = 10;
+
+rect.update = function(){
+    this.position.x += this.state.speed;
+}
+```
